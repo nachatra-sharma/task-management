@@ -1,0 +1,17 @@
+{
+  "name": "chaintechnetwork",
+  "version": "1.0.0",
+  "description": "Task Management Assignment",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index"
+  },
+  "author": "Nachatra Sharma",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.2",
+    "nodemon": "^3.1.7"
+  }
+}
