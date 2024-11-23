@@ -1,9 +1,10 @@
+const Categories = require("../models/categories-model");
 const Task = require("../models/task-model");
 const { TaskSchema, TaskUpdateSchema } = require("../utils/validation");
 
 async function handleGetAllTask(req, res) {
   try {
-    const task = await Task.find({});
+    const task = await Task.find({}).populate("categories");
     return res.status(200).json({
       success: true,
       message: "Successfully fetched all the task",
@@ -13,7 +14,7 @@ async function handleGetAllTask(req, res) {
   } catch (error) {
     console.log("Something went wrong while getting the task.");
     console.log(error);
-    return res.status(411).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong while getting the task",
       data: {},
@@ -23,22 +24,30 @@ async function handleGetAllTask(req, res) {
 }
 
 async function handleCreateTask(req, res) {
-  const { title, description } = req.body;
+  const { title, description, dueDate, categories } = req.body;
 
   try {
     if (!title || !description) {
-      throw new Error("Invalid request");
+      throw new Error("Title and description is required");
     }
 
     const isTaskSchemaValid = TaskSchema.safeParse({ title, description });
     if (!isTaskSchemaValid.success) {
-      throw new Error("Invalid Length");
+      throw new Error("Invalid Data (title or description)");
     }
     const task = await Task.create({
       title: title,
       description: description,
+      dueDate: dueDate ? new Date(dueDate) : undefined,
+      categories,
     });
-    console.log(task);
+    if (categories) {
+      await Categories.findByIdAndUpdate(
+        categories,
+        { $push: { data: task._id } },
+        { new: true }
+      );
+    }
     return res.status(200).json({
       success: true,
       message: "Successfully created the task",
@@ -48,7 +57,7 @@ async function handleCreateTask(req, res) {
   } catch (error) {
     console.log("Something went wrong while creating the task.");
     console.log(error);
-    return res.status(411).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong while creating the task",
       data: {},
@@ -61,11 +70,14 @@ async function handleDeleteTask(req, res) {
   const { task_id } = req.body;
   try {
     if (!task_id) {
-      throw new Error("Invalid Delete ID");
+      throw new Error("Task ID is required");
     }
     const deletedTask = await Task.findByIdAndDelete({
       _id: task_id,
     });
+    if (!deletedTask) {
+      throw new Error("Task not found");
+    }
     return res.status(200).json({
       success: true,
       message: "Successfully deleted the task",
@@ -75,7 +87,7 @@ async function handleDeleteTask(req, res) {
   } catch (error) {
     console.log("Something went wrong while deleting the task.");
     console.log(error);
-    return res.status(411).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong while deleting the task",
       data: {},
@@ -88,14 +100,14 @@ async function handleCompleteTask(req, res) {
   const { task_id } = req.body;
   try {
     if (!task_id) {
-      throw new Error("Invalid Task ID");
+      throw new Error("Task ID is required");
     }
     const task = await Task.findById({
       _id: task_id,
     });
 
     if (task.status === "Completed") {
-      throw new Error("Already Completed Task");
+      throw new Error("We cannot update already completed task");
     }
 
     const completedTask = await Task.findByIdAndUpdate(
@@ -107,8 +119,6 @@ async function handleCompleteTask(req, res) {
       },
       { new: true }
     );
-
-    console.log(completedTask);
     return res.status(200).json({
       success: true,
       message: "Successfully updated the status of the task",
@@ -118,7 +128,7 @@ async function handleCompleteTask(req, res) {
   } catch (error) {
     console.log("Something went wrong while updating the status of the task.");
     console.log(error);
-    return res.status(411).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong while updating the status of the task",
       data: {},
@@ -128,17 +138,17 @@ async function handleCompleteTask(req, res) {
 }
 
 async function handleUpdateTask(req, res) {
-  const { task_id, title, description } = req.body;
+  const { task_id, title, description, dueDate } = req.body;
   try {
     if (!task_id) {
-      throw new Error("Invalid Task ID");
+      throw new Error("Task ID is required");
     }
     const isValidTaskSchema = TaskUpdateSchema.safeParse({
       title,
       description,
     });
     if (!isValidTaskSchema.success) {
-      throw new Error("Invalid Inputs");
+      throw new Error("Title or description must be valid");
     }
     const updatedTask = await Task.findByIdAndUpdate(
       {
@@ -147,6 +157,7 @@ async function handleUpdateTask(req, res) {
       {
         title: title,
         description: description,
+        dueDate: dueDate,
       },
       {
         new: true,
@@ -161,7 +172,7 @@ async function handleUpdateTask(req, res) {
   } catch (error) {
     console.log("Something went wrong while updating the task.");
     console.log(error);
-    return res.status(401).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong while updating the task",
       data: {},

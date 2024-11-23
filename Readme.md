@@ -1,144 +1,91 @@
-# Assignment - Chaintech Netwrok
+# Assignment - ChainTech Network NodeJS
 
-# Task Management API
+## Task Management
 
-This is a simple Task Management API that allows users to create, view, edit, complete, and delete tasks. It provides endpoints to interact with the tasks, making it easy to manage your to-do list.
+TA **Task Management API** built using **Node.js** and **MongoDB** to manage tasks and categories. It provides endpoints for CRUD operations on tasks and categories, allowing users to organize tasks into categories, mark tasks as complete, and more.
 
 ## Table of Contents
 
 - [Features](#features)
-- [API Endpoints](#api-endpoints)
-  - [Create a Task](#create-a-task)
-  - [Get All Tasks](#get-all-tasks)
-  - [Mark Task as Completed](#mark-task-as-completed)
-  - [Edit Task Details](#edit-task-details)
-  - [Delete a Task](#delete-a-task)
 - [Technologies Used](#technologies-used)
-- [How to Run](#how-to-run)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [API Endpoints](#api-endpoints)
+  - [Task Endpoints](#task-endpoints)
+  - [Category Endpoints](#category-endpoints)
 
 ## Features
 
-- **Create Tasks**: Create a new task with a title and description.
-- **View Tasks**: Retrieve a list of all tasks.
-- **Update Tasks**: Edit the details of existing tasks.
-- **Mark Tasks as Completed**: Mark tasks as completed.
-- **Delete Tasks**: Delete tasks from the list.
+- Create, read, update, and delete tasks.
+- Organize tasks into categories.
+- Mark tasks as completed.
+- Populate task data with associated categories.
+- Robust validation with informative error responses.
+
+## Technologies Used
+
+- **Node.js**: Backend runtime.
+- **Express.js**: Web framework for building RESTful APIs.
+- **MongoDB**: Database for storing tasks and categories.
+- **Mongoose**: Object Data Modeling (ODM) library for MongoDB.
+- **Zod**: Schema-based validation.
+- **JavaScript (ES6+)**: Programming language.
+
+## Prerequisites
+
+Before running this project, ensure you have:
+
+- Node.js (v14 or higher)
+- MongoDB (running locally or via a cloud provider like MongoDB Atlas)
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/nachatra-sharma/task-management
+   cd task-management
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set-up environment variables:
+
+   - Create a .env file in the root directory and set the following variables:
+
+   ```bash
+     PORT=3000
+     Db_URL=mongodb://localhost:27017/task_management
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ## API Endpoints
 
-### 1. Create a Task
+### Task Endpoints
 
-- **Endpoint**: `POST /api/v1/task`
-- **Description**: Allows users to create a new task with a title and description.
+| Method | Endpoint          | Description                                |
+| ------ | ----------------- | ------------------------------------------ |
+| GET    | `/task`           | Fetch all tasks with populated categories. |
+| POST   | `/task`           | Create a new task.                         |
+| DELETE | `/task`           | Delete a task by ID.                       |
+| PATCH  | `/task/completed` | Mark a task as completed by ID.            |
+| PATCH  | `/task`           | Update a task's details by ID.             |
 
-**Request Body**:
+### Category Endpoints
 
-```json
-{
-  "title": "Task Title",
-  "description": "Detailed description of the task"
-}
-```
-
-### 2. Get All Tasks
-
-- **Endpoint**: `GET /api/v1/task/bulk`
-- **Description**: Retrieves a list of all tasks.
-
-**Response**:
-
-```json
-[
-  {
-    "id": 1,
-    "title": "Task Title",
-    "description": "Task Description",
-    "status": "Pending"
-  },
-  {
-    "id": 2,
-    "title": "Another Task",
-    "description": "Another Description",
-    "status": "In Progress"
-  }
-]
-```
-
-### 3. Mark Task as Completed
-
-- **Endpoint**: `PATCH /api/v1/task/completed`
-- **Description**: Marks a task as completed.
-
-**Request Body**:
-
-```json
-{
-  "task_id": 1
-}
-```
-
-### 4. Edit Task Details
-
-- **Endpoint**: `PUT /api/v1/task`
-- **Description**: Allows users to edit the details (title or description) of an existing task.
-
-**Request Body**:
-
-```json
-{
-  "task_id": 1,
-  "title": "Updated Task Title",
-  "description": "Updated Task Description"
-}
-```
-
-### 5. Delete a Task
-
-- **Endpoint**: `DELETE /api/v1/task`
-- **Description**: Deletes a task by its ID.
-
-**Request Body**:
-
-```json
-{
-  "task_id": 1
-}
-```
-
-## Persistence:
-
-- Implement data persistence simple database like MySQL/MongoDB.
-- Tasks should be stored and retrieved from the database.
-
-## Validation:
-
-- Implement validation to ensure that task titles are not empty.
-- Ensure that users can't mark a task as complete if it's already marked as such.
-- Handle errors gracefully and provide meaningful error messages.
-
-## Documentation:
-
-- Include clear instructions on how to use your To-Do List application in the README.md file.
-- Provide a brief explanation of the code structure and key decisions you made.
-
-## Bonus (Optional)
-
-- Implement due dates for tasks.
-- Add the ability to categorize tasks.
-- Implement unit tests for your application.
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
+| Method | Endpoint      | Description                               |
+| ------ | ------------- | ----------------------------------------- |
+| GET    | `/categories` | Fetch all categories with populated data. |
+| POST   | `/categories` | Create a new category.                    |
+| DELETE | `/categories` | Delete a category by ID.                  |
+| PATCH  | `/categories` | Update a category's title by ID.          |
