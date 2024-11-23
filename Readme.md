@@ -2,7 +2,7 @@
 
 ## Task Management
 
-TA **Task Management API** built using **Node.js** and **MongoDB** to manage tasks and categories. It provides endpoints for CRUD operations on tasks and categories, allowing users to organize tasks into categories, mark tasks as complete, and more.
+A **Task Management API** built using **Node.js** and **MongoDB** to manage tasks and categories. It provides endpoints for CRUD operations on tasks and categories, allowing users to organize tasks into categories, mark tasks as complete, and more.
 
 ## Table of Contents
 
